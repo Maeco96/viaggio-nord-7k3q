@@ -399,7 +399,7 @@ ol.check li { margin-bottom: 6px; }
     },
     flam: {
       title: "Con la Flåmsbana", badge: "",
-      meta: "10-12 ore · treno, battello e bus",
+      meta: "circa 11 ore · 08:25 Oslo, 19:39 Bergen",
       pros: ["Il tratto più spettacolare", "Crociera sul Nærøyfjord (UNESCO)"],
       cons: ["Giornata lunghissima", "Più cambi e più biglietti", "Prezzi e stagione da verificare"],
       bergenNights: 2, osloNights: 4, outKnown: false
@@ -536,7 +536,7 @@ ol.check li { margin-bottom: 6px; }
         title: "In treno verso Bergen", when: "Giovedì 29 aprile",
         body: "Treno Bergensbanen da Oslo S in mattinata: 6h47-7h22 attraverso l'Hardangervidda, con fermate a Geilo, Myrdal e Voss. Arrivo nel pomeriggio, passeggiata a Bryggen, prima notte a Bergen.",
         cost: "Da circa 25 € anticipato a 75 € di media a persona, solo andata.", tip: "Porta qualcosa da mangiare per il viaggio e prenota presto.",
-        warn: "Quasi sette ore di treno: la giornata è questa.", links: [["Video della Bergensbanen", YT("Bergensbanen Oslo Bergen train journey")], ["Orari su vy.no", "https://www.vy.no"]]
+        warn: "Quasi sette ore di treno: la giornata è questa. In alternativa lo stesso giorno si può fare il giro via Flåm (circa 11 ore e mezza, partenza 08:25): vedi l'opzione con la Flåmsbana.", links: [["Video della Bergensbanen", YT("Bergensbanen Oslo Bergen train journey")], ["Orari su vy.no", "https://www.vy.no"]]
       };
       if (i === 4) { var b2 = JSON.parse(JSON.stringify(bergenDay)); b2.when = "Venerdì 30 aprile"; return b2; }
       if (i === 5) return {
@@ -575,9 +575,9 @@ ol.check li { margin-bottom: 6px; }
       };
       if (v === "flam") return {
         title: "A Bergen via Flåm", when: "Mercoledì 28 aprile",
-        body: "Si parte presto. Oslo S-Myrdal (circa 5h15), Flåmsbana fino a Flåm (55 minuti, scende di 865 metri in 20 km), crociera sul Nærøyfjord da Flåm a Gudvangen (2 ore), bus fino a Voss (circa 1 ora), treno per Bergen (circa 1 ora). In tutto 10-12 ore.",
-        cost: "Oslo-Myrdal: 299-599 NOK con tariffe anticipate. Flåmsbana, crociera e bus: prezzi da verificare.", tip: "È un percorso che si può prenotare a pezzi o come pacchetto: confronta i due conti.",
-        warn: "Senza prenotazione sulla Flåmsbana è una scommessa. Non ho verificato che a fine aprile i servizi siano tutti attivi.", links: [["Video della Flåmsbana", YT("Flåmsbana railway Flåm")], ["Foto di Flåm", IMG("Flåm Nærøyfjord")]]
+        body: "Orari dal planner di Fjord Tours, da verificare per la vostra data. 08:25 treno da Oslo (fermata facoltativa a Geilo alle 11:58). 13:03 arrivo a Myrdal. 13:24 Flåmsbana, 14:22 arrivo a Flåm. 14:45 crociera elettrica sul Nærøyfjord (UNESCO), 16:45 arrivo a Gudvangen. 16:50 bus fino a Voss, 17:50 arrivo. 18:16 treno per Bergen, 19:39 arrivo. In tutto circa 11 ore e mezza.",
+        cost: "Il planner non riporta i prezzi: da verificare. Tariffa del treno indicata: Standard con cambio possibile.", tip: "A Myrdal il cambio è facile: la stazione ha solo due binari. Si può comprare come pacchetto o a pezzi: confronta i due totali.",
+        warn: "Un solo ritardo fa saltare la crociera o il bus: i collegamenti sono stretti. Non ho verificato che a fine aprile siano tutti attivi.", links: [["Planner Fjord Tours", "https://www.fjordtours.com"], ["Video della Flåmsbana", YT("Flåmsbana railway Flåm")], ["Foto di Flåm", IMG("Flåm Nærøyfjord")]]
       };
       if (v === "notte") return {
         title: "Ultima giornata a Oslo e treno notturno", when: "Mercoledì 28 aprile",
