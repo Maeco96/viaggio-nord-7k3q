@@ -383,6 +383,13 @@ ol.check li { margin-bottom: 6px; }
       cons: ["Una giornata quasi tutta in treno"],
       bergenNights: 2, osloNights: 4, outKnown: true
     },
+    diana: {
+      title: "Il piano di Diana", badge: "Nuova",
+      meta: "3 notti a Oslo, 3 a Bergen · rientro da Bergen",
+      pros: ["Niente treno di ritorno a Oslo", "Crociera sui fiordi in partenza da Bergen", "Due gite da Oslo e una da Bergen"],
+      cons: ["Due voli separati: andata su Oslo, ritorno da Bergen", "Il ritorno da Bergen ha sempre almeno uno scalo", "Prezzo dei voli da cercare con \"più destinazioni\""],
+      bergenNights: 3, osloNights: 3, outKnown: false
+    },
     volo: {
       title: "Treno all'andata, volo al ritorno", badge: "",
       meta: "Bergen-Oslo in circa 55 minuti di volo",
@@ -480,9 +487,9 @@ ol.check li { margin-bottom: 6px; }
   }
   function renderAlts() {
     var box = $("alts");
-    if (state.variant !== "skip") { box.hidden = true; box.innerHTML = ""; return; }
+    if (state.variant !== "skip" && state.variant !== "diana") { box.hidden = true; box.innerHTML = ""; return; }
     box.hidden = false;
-    var h = '<fieldset style="border:0;margin:0;padding:0;min-width:0"><legend><b>Che gita fate il giovedì?</b> Il resto del programma cambia di conseguenza.</legend>';
+    var h = '<fieldset style="border:0;margin:0;padding:0;min-width:0"><legend><b>Che gita fate il ' + (state.variant === "diana" ? "mercoledì" : "giovedì") + '?</b> Il programma cambia di conseguenza.</legend>';
     Object.keys(alts).forEach(function (k) {
       h += '<label class="opt"><input type="radio" name="alt" value="' + k + '"' + (state.alt === k ? " checked" : "") + '><span><b>' + esc(alts[k].name) + "</b><br><small>" + esc(alts[k].sub) + "</small></span></label>";
     });
@@ -510,6 +517,41 @@ ol.check li { margin-bottom: 6px; }
       cost: "Funicolare e ingressi: prezzi da verificare.", tip: "Nel tardo pomeriggio la città dall'alto è il momento migliore per le foto.",
       warn: "Bergen è famosa per la pioggia: giacca impermeabile in valigia.", links: bergenLinks
     };
+    if (v === "diana") {
+      if (i === 0) return {
+        title: "Arrivo a Oslo", when: "Lunedì 26 aprile",
+        body: "Atterraggio a Oslo Gardermoen, treno o bus fino in centro (circa 30 minuti), check-in. Passeggiata a Bjørvika: Opera House (sul tetto si sale gratis) e il lungomare. Cena a Vippa, street food sul fiordo.",
+        cost: "Tetto dell'Opera gratis. Biglietto dall'aeroporto: da verificare.", tip: "Orario di arrivo da definire con il volo che sceglierete.",
+        warn: "Con un volo con scalo non riempire troppo il pomeriggio.", links: [["Foto di Oslo Opera House", IMG("Oslo Opera House")], ["Video di Oslo", YT("Oslo Norway city tour")]]
+      };
+      if (i === 1) return {
+        title: "Gita in mattinata e concerto", when: "Martedì 27 aprile",
+        body: "Mattina: gita corta a Drøbak, villaggio sul fiordo a circa 40 km da Oslo, in bus. Rientro entro metà pomeriggio, cena presto e bus fino a Fornebuparken per A Painted Symphony alla Unity Arena.",
+        cost: "Bus per Drøbak e mezzi per Fornebu: da verificare.", tip: "Il concerto è la priorità: tenete margine, la gita è facile da accorciare.",
+        warn: "Non ho verificato se la fortezza di Oscarsborg è aperta a fine aprile. Nei grandi eventi la fermata di Fornebuparken può essere bloccata: leggi l'avviso dell'arena.",
+        links: [["Foto di Drøbak", IMG("Drøbak Oscarsborg fortress")], ["Video del concerto", YT("Expedition 33 A Painted Symphony concert")]]
+      };
+      if (i === 2) { var g = JSON.parse(JSON.stringify(altDays[state.alt][1])); g.when = "Mercoledì 28 aprile"; return g; }
+      if (i === 3) return {
+        title: "In treno verso Bergen", when: "Giovedì 29 aprile",
+        body: "Treno Bergensbanen da Oslo S in mattinata: 6h47-7h22 attraverso l'Hardangervidda, con fermate a Geilo, Myrdal e Voss. Arrivo nel pomeriggio, passeggiata a Bryggen, prima notte a Bergen.",
+        cost: "Da circa 25 € anticipato a 75 € di media a persona, solo andata.", tip: "Porta qualcosa da mangiare per il viaggio e prenota presto.",
+        warn: "Quasi sette ore di treno: la giornata è questa.", links: [["Video della Bergensbanen", YT("Bergensbanen Oslo Bergen train journey")], ["Orari su vy.no", "https://www.vy.no"]]
+      };
+      if (i === 4) { var b2 = JSON.parse(JSON.stringify(bergenDay)); b2.when = "Venerdì 30 aprile"; return b2; }
+      if (i === 5) return {
+        title: "Bergen e crociera sui fiordi", when: "Sabato 1 maggio",
+        body: "Crociera in partenza da Bergen. L'opzione più semplice è la mezza giornata su Osterfjord e Mostraumen, di 3-3,5 ore, con partenze in mattinata o dopo pranzo. Se volete il fiordo famoso (Nærøyfjord, UNESCO), c'è il giro di una giornata intera da Bergen con treno, bus e battello: si chiama Norway in a Nutshell.",
+        cost: "Mostraumen: da circa 890 NOK a persona (circa 80 €). Norway in a Nutshell: molto di più, da verificare (una fonte parla di circa 160 $ a persona).", tip: "Con la mezza giornata resta il tempo per Bryggen o la funicolare.",
+        warn: "Il 1 maggio in Norvegia è festa: negozi chiusi e orari ridotti, controlla gli orari della crociera e dei mezzi. Il pranzo meglio prenotato o già pronto.", links: [["Rødne, crociera Mostraumen", "https://rodne.no"], ["Fjord Tours (Nutshell)", "https://www.fjordtours.com"], ["Foto di Mostraumen", IMG("Mostraumen fjord cruise Bergen")]]
+      };
+      return {
+        title: "Rientro da Bergen", when: "Domenica 2 maggio",
+        body: "Dall'aeroporto di Bergen Flesland, che è fuori città: conta il trasferimento e arriva due ore prima. Non esiste un volo diretto Bergen-Venezia: si passa da uno scalo, di solito Francoforte o Copenaghen.",
+        cost: "Prezzo da cercare con \"più destinazioni\" su Skyscanner, andata su Oslo e ritorno da Bergen.", tip: "Scegli un volo del pomeriggio, così la mattina resta tranquilla.",
+        warn: "Con uno scalo e il rientro da Bergen controlla le coincidenze: meglio non troppo strette.", links: [["Skyscanner", "https://www.skyscanner.it"], ["Lufthansa", "https://www.lufthansa.com"], ["SAS", "https://www.flysas.com"]]
+      };
+    }
     if (v === "skip" && i >= 2 && i <= 4) return altDays[state.alt][i - 2];
     if (i === 0) return {
       title: "Arrivo e Bjørvika", when: "Lunedì 26 aprile",
@@ -646,7 +688,8 @@ ol.check li { margin-bottom: 6px; }
     var l = lodgings[state.lodging];
     var rows = [], todo = [], total = 0;
 
-    rows.push(["Voli", "andata e ritorno, due persone", f.tot]); total += f.tot;
+    if (state.variant !== "diana") { rows.push(["Voli", "andata e ritorno, due persone", f.tot]); total += f.tot; }
+    else { todo.push("Voli: andata su Oslo e ritorno da Bergen, da cercare con \"più destinazioni\"."); }
 
     var osloCost = Math.round(l.tot * v.osloNights / 6);
     rows.push(["Alloggio a Oslo", v.osloNights + " notti, stima in proporzione", osloCost]); total += osloCost;
@@ -659,6 +702,9 @@ ol.check li { margin-bottom: 6px; }
 
     if (state.variant === "diretto") {
       var tc = 2 * 2 * state.fare; rows.push(["Treno Oslo-Bergen", "andata e ritorno, due persone", tc]); total += tc;
+    } else if (state.variant === "diana") {
+      var td = 2 * state.fare; rows.push(["Treno Oslo-Bergen", "solo andata, due persone", td]); total += td;
+      rows.push(["Crociera Mostraumen", "due persone, da circa 890 NOK a testa", 160]); total += 160;
     } else if (state.variant === "volo") {
       var tv = 2 * state.fare; rows.push(["Treno Oslo-Bergen", "solo andata, due persone", tv]); total += tv;
       var fv = 2 * 70; rows.push(["Volo Bergen-Oslo", "due persone, stima senza bagaglio", fv]); total += fv;
@@ -670,7 +716,7 @@ ol.check li { margin-bottom: 6px; }
       todo.push("Biglietti del treno notturno all'andata.");
     }
 
-    if ($("in-car").checked) { rows.push(["Auto a noleggio", "un giorno, senza pedaggi", 59]); total += 59; }
+    if ($("in-car").checked && state.variant !== "diana") { rows.push(["Auto a noleggio", "un giorno, senza pedaggi", 59]); total += 59; }
 
     var food = parseFloat($("in-food").value) || 0;
     if (food > 0) { var fc = food * 7; rows.push(["Cibo", "7 giorni, due persone", fc]); total += fc; }
