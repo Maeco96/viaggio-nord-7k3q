@@ -1,0 +1,719 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Oslo e Bergen 2027</title>
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500..800&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* Palette: fjord teal as accent, Bryggen red as second accent, moss for "yes".
+   Layout: one column, sticky section nav, cards on a cool grey-blue ground. */
+:root {
+  --bg: #eef3f4;
+  --surface: #ffffff;
+  --ink: #122328;
+  --muted: #506469;
+  --line: #d3dfe1;
+  --fjord: #1d5c6a;
+  --fjord-soft: #dcebee;
+  --wharf: #b4412c;
+  --wharf-soft: #f6e1db;
+  --moss: #3f6b4a;
+  --moss-soft: #dfeee2;
+  --display: "Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --body: "Instrument Sans", "Segoe UI", system-ui, sans-serif;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0e1a1d; --surface: #15262a; --ink: #e6f0f1; --muted: #9db4b8; --line: #274147;
+    --fjord: #6bb7c6; --fjord-soft: #17343a; --wharf: #ef8a73; --wharf-soft: #3a201b;
+    --moss: #8fc79b; --moss-soft: #1c3322; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0e1a1d; --surface: #15262a; --ink: #e6f0f1; --muted: #9db4b8; --line: #274147;
+  --fjord: #6bb7c6; --fjord-soft: #17343a; --wharf: #ef8a73; --wharf-soft: #3a201b;
+  --moss: #8fc79b; --moss-soft: #1c3322; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--body); font-size: 17px; line-height: 1.55; }
+a { color: var(--fjord); }
+:focus-visible { outline: 3px solid var(--wharf); outline-offset: 2px; border-radius: 4px; }
+.wrap { max-width: 1040px; margin: 0 auto; padding: 0 18px; }
+h1, h2, h3 { font-family: var(--display); line-height: 1.1; text-wrap: balance; margin: 0; }
+h2 { font-size: clamp(1.6rem, 3.5vw, 2.1rem); margin-bottom: 6px; }
+h3 { font-size: 1.15rem; }
+p { margin: 0 0 10px; max-width: 68ch; }
+.lead { color: var(--muted); max-width: 62ch; margin-bottom: 18px; }
+section { padding: 34px 0 6px; scroll-margin-top: 64px; }
+
+header.hero { background: var(--fjord); color: #fff; padding: 34px 0 30px; }
+:root[data-theme="dark"] header.hero, :root:not([data-theme="light"]) header.hero { }
+header.hero h1 { font-size: clamp(2.2rem, 7vw, 4rem); letter-spacing: -0.02em; }
+header.hero p { color: #e3f0f2; max-width: 60ch; font-size: 1.05rem; margin-top: 12px; }
+.pills { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
+.pill { background: rgba(255,255,255,.16); border: 1px solid rgba(255,255,255,.35); border-radius: 999px; padding: 4px 13px; font-size: .92rem; color: #fff; }
+.pill.hot { background: var(--wharf); border-color: var(--wharf); }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) header.hero { background: #12353d; } :root:not([data-theme="light"]) .pill.hot { background: #b4412c; } }
+:root[data-theme="dark"] header.hero { background: #12353d; }
+:root[data-theme="dark"] .pill.hot { background: #b4412c; }
+
+nav.sticky { position: sticky; top: 0; z-index: 5; background: var(--surface); border-bottom: 1px solid var(--line); }
+nav.sticky .wrap { display: flex; gap: 4px; overflow-x: auto; padding-top: 6px; padding-bottom: 6px; }
+nav.sticky a { white-space: nowrap; text-decoration: none; color: var(--ink); padding: 7px 12px; border-radius: 8px; font-weight: 500; font-size: .95rem; }
+nav.sticky a:hover { background: var(--fjord-soft); }
+
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 18px; }
+.grid2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 14px; }
+.grid4 { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 12px; }
+
+/* map */
+.mapbox { display: grid; grid-template-columns: minmax(0, 1.7fr) minmax(250px, 1fr); gap: 14px; align-items: start; }
+@media (max-width: 760px) { .mapbox { grid-template-columns: 1fr; } }
+.mapbox svg { width: 100%; height: auto; display: block; background: var(--surface); border: 1px solid var(--line); border-radius: 14px; }
+.land { fill: var(--fjord-soft); }
+.rail { stroke: var(--fjord); stroke-width: 4; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+.rail.alt { stroke-width: 3; stroke-dasharray: 3 7; }
+.road { stroke: var(--wharf); stroke-width: 3; fill: none; stroke-linecap: round; }
+.air { stroke: var(--muted); stroke-width: 2; stroke-dasharray: 2 8; fill: none; stroke-linecap: round; }
+.node { cursor: pointer; }
+.node circle { fill: var(--surface); stroke: var(--fjord); stroke-width: 3.5; }
+.node.on circle { fill: var(--wharf); stroke: var(--wharf); }
+.node text { fill: var(--ink); font-family: var(--body); font-size: 14px; font-weight: 600; paint-order: stroke; stroke: var(--surface); stroke-width: 4px; }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: .86rem; color: var(--muted); margin-top: 8px; }
+.legend i { display: inline-block; width: 26px; height: 0; border-top: 4px solid var(--fjord); vertical-align: middle; margin-right: 6px; }
+.legend i.d { border-top: 3px dotted var(--fjord); }
+.legend i.r { border-top-color: var(--wharf); }
+.legend i.a { border-top: 2px dotted var(--muted); }
+#stop-panel { min-height: 190px; }
+#stop-panel h3 { margin-bottom: 8px; }
+.tag { display: inline-block; font-size: .78rem; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; color: var(--fjord); background: var(--fjord-soft); border-radius: 6px; padding: 2px 8px; margin-bottom: 8px; }
+
+/* variants */
+.vcard { position: relative; display: block; cursor: pointer; background: var(--surface); border: 2px solid var(--line); border-radius: 14px; padding: 16px; height: 100%; }
+.vcard input { position: absolute; opacity: 0; pointer-events: none; }
+.vcard:has(input:checked) { border-color: var(--fjord); background: var(--fjord-soft); }
+.vcard:has(input:focus-visible) { outline: 3px solid var(--wharf); outline-offset: 2px; }
+.vcard h3 { margin-bottom: 6px; }
+.vcard .meta { font-size: .88rem; color: var(--muted); margin-bottom: 8px; }
+.vcard ul { margin: 0; padding-left: 18px; font-size: .94rem; }
+.vcard li { margin-bottom: 3px; }
+.vcard .badge { font-size: .76rem; font-weight: 700; color: #fff; background: var(--moss); border-radius: 6px; padding: 2px 8px; margin-left: 6px; }
+:root[data-theme="dark"] .vcard .badge { color: #0e1a1d; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .vcard .badge { color: #0e1a1d; } }
+
+/* days */
+.daytabs { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 6px; margin-bottom: 12px; }
+.daytabs button { font: inherit; cursor: pointer; border: 1px solid var(--line); background: var(--surface); color: var(--ink); border-radius: 10px; padding: 8px 12px; min-width: 78px; text-align: left; }
+.daytabs button b { display: block; font-family: var(--display); font-size: 1.05rem; }
+.daytabs button span { font-size: .8rem; color: var(--muted); }
+.daytabs button[aria-selected="true"] { background: var(--fjord); border-color: var(--fjord); color: #fff; }
+.daytabs button[aria-selected="true"] span { color: #dcebee; }
+:root[data-theme="dark"] .daytabs button[aria-selected="true"] { background: #1d5c6a; color: #fff; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .daytabs button[aria-selected="true"] { background: #1d5c6a; color: #fff; } }
+.daypanel h3 { font-size: 1.5rem; margin-bottom: 4px; }
+.daypanel .when { color: var(--muted); font-size: .95rem; margin-bottom: 12px; }
+.facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 10px; margin: 14px 0; }
+.fact { border-radius: 10px; padding: 10px 12px; font-size: .94rem; }
+.fact b { display: block; font-size: .76rem; letter-spacing: .05em; text-transform: uppercase; margin-bottom: 2px; }
+.fact.cost { background: var(--fjord-soft); }
+.fact.cost b { color: var(--fjord); }
+.fact.tip { background: var(--moss-soft); }
+.fact.tip b { color: var(--moss); }
+.fact.warn { background: var(--wharf-soft); }
+.fact.warn b { color: var(--wharf); }
+.btnrow { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+.btn { display: inline-block; text-decoration: none; font-weight: 600; font-size: .92rem; border: 1.5px solid var(--fjord); color: var(--fjord); border-radius: 9px; padding: 6px 12px; background: transparent; }
+.btn:hover { background: var(--fjord-soft); }
+.stepbtns { display: flex; justify-content: space-between; margin-top: 14px; }
+.stepbtns button { font: inherit; cursor: pointer; border: 1px solid var(--line); background: var(--surface); color: var(--ink); border-radius: 9px; padding: 7px 14px; }
+.stepbtns button:disabled { opacity: .4; cursor: default; }
+
+/* budget */
+.budget { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); gap: 14px; align-items: start; }
+@media (max-width: 820px) { .budget { grid-template-columns: 1fr; } }
+.field { margin-bottom: 16px; }
+.field > label, .field > legend { display: block; font-weight: 600; margin-bottom: 6px; padding: 0; }
+fieldset.field { border: 0; margin: 0 0 16px; padding: 0; min-width: 0; }
+.opt { display: flex; gap: 8px; align-items: baseline; padding: 5px 0; font-size: .95rem; }
+.opt input { flex: none; }
+.opt small { color: var(--muted); }
+.field input[type="number"] { font: inherit; width: 110px; padding: 6px 8px; border: 1px solid var(--line); border-radius: 8px; background: var(--bg); color: var(--ink); }
+table.sum { width: 100%; border-collapse: collapse; font-size: .95rem; }
+table.sum td { padding: 7px 4px; border-bottom: 1px solid var(--line); vertical-align: top; }
+table.sum td:last-child { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; font-weight: 600; }
+table.sum small { display: block; color: var(--muted); font-weight: 400; }
+.total { font-family: var(--display); font-size: 2.3rem; margin-top: 12px; font-variant-numeric: tabular-nums; }
+.total small { font-family: var(--body); font-size: .95rem; color: var(--muted); display: block; }
+.todo { margin: 12px 0 0; padding: 10px 12px 10px 28px; background: var(--wharf-soft); border-radius: 10px; font-size: .92rem; }
+
+/* advice */
+.yes, .no { border-radius: 14px; padding: 18px; }
+.yes { background: var(--moss-soft); border: 1px solid var(--moss); }
+.no { background: var(--wharf-soft); border: 1px solid var(--wharf); }
+.yes h3 { color: var(--moss); }
+.no h3 { color: var(--wharf); }
+.yes ul, .no ul { margin: 10px 0 0; padding-left: 20px; }
+.yes li, .no li { margin-bottom: 8px; }
+
+.links { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 12px; }
+.links .card h3 { margin-bottom: 4px; }
+.links .card p { font-size: .94rem; color: var(--muted); }
+
+footer { padding: 30px 0 50px; color: var(--muted); font-size: .9rem; }
+ol.check { padding-left: 22px; }
+ol.check li { margin-bottom: 6px; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <h1>Oslo e Bergen</h1>
+    <p>Sette giorni in due, con il concerto di Expedition 33 al centro e il treno per Bergen in mezzo. Un pacchetto fatto a mano e senza ricarichi: ogni voce la prenoti direttamente da chi la vende.</p>
+    <div class="pills">
+      <span class="pill">26 aprile - 2 maggio 2027</span>
+      <span class="pill">6 notti</span>
+      <span class="pill">2 persone</span>
+      <span class="pill hot">Concerto: martedì 27 aprile, Unity Arena</span>
+    </div>
+  </div>
+</header>
+
+<nav class="sticky" aria-label="Sezioni">
+  <div class="wrap">
+    <a href="#percorso">Percorso</a>
+    <a href="#scelta">Come arrivare a Bergen</a>
+    <a href="#giorni">Giorno per giorno</a>
+    <a href="#costi">Quanto costa</a>
+    <a href="#consigli">Consigli e sconsigli</a>
+    <a href="#foto">Foto e video</a>
+    <a href="#verifiche">Da verificare</a>
+  </div>
+</nav>
+
+<main class="wrap">
+
+<section id="percorso">
+  <h2>Il percorso</h2>
+  <p class="lead">Tocca una tappa per leggere cosa c'è da sapere. Lo schema non è in scala.</p>
+  <div class="mapbox">
+    <div>
+      <svg viewBox="0 0 820 450" role="img" aria-label="Schema del percorso: Venezia, Oslo, Fornebu, Bergen e le tappe in treno">
+        <path class="land" d="M40 160 C70 110 150 80 250 70 C330 40 420 60 500 100 C580 90 700 110 740 170 C760 230 720 300 690 380 C650 400 600 395 560 372 C500 340 420 310 330 290 C240 280 120 270 70 235 C45 215 35 190 40 160 Z" />
+        <path class="rail alt" d="M360 170 L330 110" />
+        <path class="rail" d="M120 190 L235 205 L360 170 L470 185 L560 215 L650 245" />
+        <path class="road" d="M650 245 L615 262" />
+        <path class="road" d="M650 245 L655 345" />
+        <path class="air" d="M790 430 L668 215" />
+        <g class="node" data-id="ven" tabindex="0" role="button" aria-label="Venezia"><circle cx="790" cy="430" r="9"/><text x="700" y="436">Venezia</text></g>
+        <g class="node" data-id="gard" tabindex="0" role="button" aria-label="Aeroporto di Oslo Gardermoen"><circle cx="668" cy="212" r="8"/><text x="590" y="196">Gardermoen</text></g>
+        <g class="node" data-id="oslo" tabindex="0" role="button" aria-label="Oslo"><circle cx="650" cy="245" r="10"/><text x="664" y="258">Oslo</text></g>
+        <g class="node" data-id="fornebu" tabindex="0" role="button" aria-label="Fornebu, Unity Arena"><circle cx="615" cy="262" r="8"/><text x="540" y="290">Fornebu</text></g>
+        <g class="node" data-id="drobak" tabindex="0" role="button" aria-label="Drøbak"><circle cx="655" cy="345" r="8"/><text x="668" y="350">Drøbak</text></g>
+        <g class="node" data-id="myrdal" tabindex="0" role="button" aria-label="Myrdal"><circle cx="360" cy="170" r="8"/><text x="372" y="190">Myrdal</text></g>
+        <g class="node" data-id="flam" tabindex="0" role="button" aria-label="Flåm"><circle cx="330" cy="110" r="8"/><text x="342" y="106">Flåm</text></g>
+        <g class="node" data-id="bergen" tabindex="0" role="button" aria-label="Bergen"><circle cx="120" cy="190" r="10"/><text x="100" y="222">Bergen</text></g>
+      </svg>
+      <div class="legend">
+        <span><i></i>Treno Bergensbanen</span>
+        <span><i class="d"></i>Flåmsbana (variante)</span>
+        <span><i class="r"></i>Bus o auto</span>
+        <span><i class="a"></i>Volo</span>
+      </div>
+    </div>
+    <div class="card" id="stop-panel" aria-live="polite"></div>
+  </div>
+</section>
+
+<section id="scelta">
+  <h2>Come arrivare a Bergen</h2>
+  <p class="lead">Scegline una: cambia il programma dei giorni e il conto più sotto. La prima è quella che consiglio.</p>
+  <fieldset style="border:0;margin:0;padding:0;min-width:0">
+    <legend class="lead" style="padding:0">Quattro versioni, tutte possibili</legend>
+    <div class="grid4" id="variants"></div>
+  </fieldset>
+  <div class="card" id="alts" hidden style="margin-top:14px"></div>
+</section>
+
+<section id="giorni">
+  <h2>Giorno per giorno</h2>
+  <p class="lead">Un giorno alla volta, con costi, consigli e cose a cui stare attenti.</p>
+  <div class="daytabs" role="tablist" aria-label="Giorni del viaggio" id="daytabs"></div>
+  <div class="card daypanel" id="daypanel" role="tabpanel" aria-live="polite"></div>
+  <div class="stepbtns">
+    <button type="button" id="prev">Giorno prima</button>
+    <button type="button" id="next">Giorno dopo</button>
+  </div>
+</section>
+
+<section id="costi">
+  <h2>Quanto costa</h2>
+  <p class="lead">Cambia le scelte a sinistra e il totale si aggiorna. Conta solo le voci che conosco: quelle che mancano sono elencate sotto il totale. Non è un preventivo.</p>
+  <div class="budget">
+    <div class="card">
+      <fieldset class="field"><legend>Volo (2 persone, economy)</legend><div id="f-flight"></div></fieldset>
+      <fieldset class="field"><legend>Alloggio a Oslo</legend><div id="f-lodging"></div>
+        <small style="color:var(--muted)">Booking dà il totale per 6 notti: per meno notti lo riporto in proporzione, quindi è una stima.</small></fieldset>
+      <fieldset class="field"><legend>Biglietto del treno per Bergen (a persona, a tratta)</legend><div id="f-train"></div></fieldset>
+      <div class="field"><label for="in-bergen">Alloggio a Bergen, euro a notte (non l'ho ancora cercato)</label><input id="in-bergen" type="number" min="0" step="5" placeholder="es. 110"></div>
+      <div class="field"><label for="in-food">Cibo al giorno per due, in euro (è una mia stima, cambiala)</label><input id="in-food" type="number" min="0" step="5" value="80"></div>
+      <div class="field"><label for="in-concert">Biglietti del concerto, totale in euro (se già comprati)</label><input id="in-concert" type="number" min="0" step="5" placeholder="0"></div>
+      <div class="field"><label class="opt" style="font-weight:600"><input id="in-car" type="checkbox" checked> Auto a noleggio per un giorno (Drøbak)</label></div>
+    </div>
+    <div class="card" aria-live="polite">
+      <h3>Il conto</h3>
+      <table class="sum" id="sum"></table>
+      <div class="total" id="total"></div>
+      <ol class="todo" id="todo"></ol>
+    </div>
+  </div>
+</section>
+
+<section id="consigli">
+  <h2>Consigli e sconsigli</h2>
+  <p class="lead">Quello che farei io e quello che eviterei.</p>
+  <div class="grid2">
+    <div class="yes">
+      <h3>Fai così</h3>
+      <ul>
+        <li>Vai a Bergen con il treno di giorno: il paesaggio è parte del viaggio, e la linea attraversa l'altopiano dell'Hardangervidda a circa 1.300 metri.</li>
+        <li>Compra i biglietti Vy in anticipo: le tariffe anticipate partono da circa 249-299 NOK, quelle standard sono 599-899 NOK.</li>
+        <li>Dormi in un appartamento con cucina e prendi colazione e spuntini al supermercato (Kiwi, Rema 1000: circa 60-120 NOK a pasto).</li>
+        <li>Pranza a Mathallen o a Vippa, che costano meno dei ristoranti seduti. Per la sera scegli uno o due locali buoni e basta.</li>
+        <li>Il giorno del concerto vai a Fornebu in bus: lo consiglia l'arena stessa.</li>
+        <li>Prenota l'alloggio con cancellazione gratuita finché non hai i voli.</li>
+        <li>Fermati due notti a Bergen: le guide le indicano come il punto di equilibrio.</li>
+      </ul>
+    </div>
+    <div class="no">
+      <h3>Evita o fai attenzione</h3>
+      <ul>
+        <li>L'auto in centro a Oslo: parcheggi scarsi e pedaggi di circa 15-35 NOK a ogni passaggio.</li>
+        <li>Bergen in giornata da Oslo: sono quasi 14 ore di treno tra andata e ritorno. Le guide dicono chiaramente di no.</li>
+        <li>Il Viking Ship Museum: è chiuso, riapre a fine 2027.</li>
+        <li>L'Oslo Pass se vedi solo uno o due musei: conviene con tanti ingressi. Non copre nemmeno la gita a Drøbak.</li>
+        <li>Il primo ristorante che trovi su Karl Johans gate.</li>
+        <li>Un pacchetto già fatto di Norway in a Nutshell senza confrontarlo: lo stesso percorso si può comprare a pezzi.</li>
+        <li>Il volo con la valigia in stiva senza fare i conti: sui low cost costa circa 39-89 € a tratta.</li>
+        <li>Il SAS con ritorno alle 06:00: risparmi 54 € in due ma sveglia di notte.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section id="foto">
+  <h2>Foto e video</h2>
+  <p class="lead">Nella pagina non posso incorporare foto e video, quindi qui trovi ricerche pronte. Si aprono fuori da questa pagina.</p>
+  <div class="links" id="linkgrid"></div>
+</section>
+
+<section id="verifiche">
+  <h2>Da verificare prima di prenotare</h2>
+  <div class="card">
+    <ol class="check">
+      <li>I prezzi dei voli sono quelli visti su Skyscanner il 13 novembre 2026: cambiano, e va controllato cosa include la tariffa, bagaglio compreso.</li>
+      <li>Orari e prezzi dei treni Oslo-Bergen per il 28 e il 30 aprile su <a href="https://www.vy.no" target="_blank" rel="noopener noreferrer">vy.no</a>. Le cifre qui vengono da guide e siti di confronto.</li>
+      <li>Se scegli la Flåmsbana: orari, prezzi e stagione di Flåmsbana, crociera e bus. Non li ho verificati per fine aprile.</li>
+      <li>Se scegli il treno notturno: prezzo e categoria di posto.</li>
+      <li>Apertura della fortezza di Oscarsborg a Drøbak a inizio maggio.</li>
+      <li>Alloggio a Bergen: non l'ho ancora cercato. Dopo la scelta sulle notti rifaccio la ricerca a Oslo per le notti che restano.</li>
+      <li>Biglietti del concerto: dal sito dell'organizzatore, non da rivenditori.</li>
+      <li>Costi dei trasporti locali a Oslo e Bergen e ingressi (funicolare, musei).</li>
+    </ol>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="wrap">Prezzi indicativi e conversioni a occhio, raccolti il 13 novembre 2026 da Skyscanner, Booking.com e guide di viaggio. Quello che conta è il prezzo che vedi sul sito di chi vende.</div>
+</footer>
+
+<script>
+(function () {
+  "use strict";
+  var eur = new Intl.NumberFormat("it-IT", { style: "currency", currency: "EUR", maximumFractionDigits: 0 });
+  function $(id) { return document.getElementById(id); }
+  function esc(s) { return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;"); }
+  function q(s) { return encodeURIComponent(s); }
+  var YT = function (s) { return "https://www.youtube.com/results?search_query=" + q(s); };
+  var IMG = function (s) { return "https://www.google.com/search?tbm=isch&q=" + q(s); };
+
+  /* ---------- data ---------- */
+  var stops = {
+    ven: { tag: "Partenza", name: "Venezia", text: "Da Marco Polo o da Treviso. Per le tue date Skyscanner non mostra nessun volo diretto: serve almeno uno scalo.", link: ["Voli su Skyscanner", "https://www.skyscanner.it"] },
+    gard: { tag: "Aeroporto", name: "Oslo Gardermoen", text: "A circa 50 km dal centro: 30 minuti con i mezzi pubblici, 40 in auto.", link: null },
+    oslo: { tag: "Base", name: "Oslo", text: "Si gira bene a piedi e con tram e metro. In centro i parcheggi sono pochi e ci sono i pedaggi, quindi l'auto non serve. Tra le cose da vedere: Opera House con il tetto gratis, Akershus, Aker Brygge, Mathallen.", link: ["Visit Oslo", "https://www.visitoslo.com"] },
+    fornebu: { tag: "Concerto", name: "Fornebu, Unity Arena", text: "Martedì 27 aprile 2027 va in scena A Painted Symphony. L'arena è a Fornebu, circa 20-25 minuti in auto dal centro, e consiglia i bus: la fermata più vicina è Fornebuparken.", link: null },
+    drobak: { tag: "Gita", name: "Drøbak", text: "Villaggio sul fiordo a circa 40 km da Oslo. Davanti c'è la fortezza di Oscarsborg, famosa per aver affondato l'incrociatore Blücher nell'aprile 1940.", link: null },
+    myrdal: { tag: "Cambio", name: "Myrdal", text: "Stazione sulla Bergensbanen dove si cambia per la Flåmsbana.", link: null },
+    flam: { tag: "Variante", name: "Flåm", text: "In fondo alla Flåmsbana: 55 minuti di discesa per 865 metri. Da qui parte la crociera sul Nærøyfjord, patrimonio UNESCO.", link: null },
+    bergen: { tag: "Seconda tappa", name: "Bergen", text: "Bryggen con le case di legno colorate sul porto, il Mercato del Pesce e la funicolare Fløibanen. Le guide consigliano almeno due notti.", link: ["Visit Bergen", "https://www.visitbergen.com"] }
+  };
+
+  var flights = {
+    lh:      { name: "Lufthansa, operato da Air Dolomiti", out: "VCE 06:30 - OSL 10:55", back: "OSL 13:05 - VCE 17:40", arr: "10:55", dep: "13:05", tot: 445, pp: 223, badge: "Consigliato", note: "scali a Monaco e Francoforte" },
+    sas218:  { name: "SAS", out: "VCE 11:00 - OSL 14:55", back: "OSL 12:25 - VCE 18:50", arr: "14:55", dep: "12:25", tot: 435, pp: 218, note: "scalo a Copenaghen" },
+    sas196a: { name: "SAS", out: "VCE 11:00 - OSL 14:55", back: "OSL 06:00 - VCE 10:10", arr: "14:55", dep: "06:00", tot: 391, pp: 196, note: "ritorno all'alba" },
+    sas196b: { name: "SAS", out: "VCE 11:00 - OSL 14:55", back: "OSL 11:00 - VCE 18:50", arr: "14:55", dep: "11:00", tot: 391, pp: 196, note: "ritorno di 7h50" }
+  };
+
+  var lodgings = {
+    solli:  { name: "Bjørvika Apartments, Solli", area: "Frogner", tot: 571, score: "8.1" },
+    teat:   { name: "Bjørvika Apartments, Teaterplassen", area: "centro, vicino all'Opera", tot: 663, score: "8.2" },
+    sweet:  { name: "The Apartments Company, The Sweet", area: "Frogner", tot: 719, score: "8.2" },
+    bors:   { name: "Comfort Hotel Børsparken", area: "centro", tot: 722, score: "8.1" },
+    frog:   { name: "The Apartments Company, Frogner", area: "Frogner", tot: 737, score: "8.4" },
+    maya:   { name: "MAYA Apartments, Carl Berner", area: "Grünerløkka", tot: 792, score: "8.6" },
+    refined:{ name: "Refined and Ultra-Central Apartment Studio", area: "Frogner", tot: 897, score: "9.7, 30 recensioni" }
+  };
+
+  var variants = {
+    diretto: {
+      title: "Treno diretto di giorno", badge: "Consigliata",
+      meta: "6h47-7h22 · 4-5 corse al giorno",
+      pros: ["Si vede tutto il paesaggio", "Una notte in meno di fatica", "Biglietto semplice da prenotare"],
+      cons: ["Una giornata quasi tutta in treno"],
+      bergenNights: 2, osloNights: 4, outKnown: true
+    },
+    volo: {
+      title: "Treno all'andata, volo al ritorno", badge: "",
+      meta: "Bergen-Oslo in circa 55 minuti di volo",
+      pros: ["Il treno panoramico lo fai all'andata", "Torni a Oslo in circa un'ora invece di 7", "Più tempo a Bergen venerdì"],
+      cons: ["Costa più del treno anticipato", "Valigia a pagamento sui voli economici", "Aeroporti e controlli: conta 3 ore in tutto"],
+      bergenNights: 2, osloNights: 4, outKnown: false
+    },
+    flam: {
+      title: "Con la Flåmsbana", badge: "",
+      meta: "10-12 ore · treno, battello e bus",
+      pros: ["Il tratto più spettacolare", "Crociera sul Nærøyfjord (UNESCO)"],
+      cons: ["Giornata lunghissima", "Più cambi e più biglietti", "Prezzi e stagione da verificare"],
+      bergenNights: 2, osloNights: 4, outKnown: false
+    },
+    notte: {
+      title: "Treno notturno", badge: "",
+      meta: "Oslo 23:03 · Bergen 06:23",
+      pros: ["Una notte d'albergo in meno", "Il mercoledì resta libero a Oslo"],
+      cons: ["Arrivo all'alba", "Il posto Standard è il meno riposante", "Prezzo da verificare"],
+      bergenNights: 1, osloNights: 4, outKnown: false
+    },
+    skip: {
+      title: "Niente Bergen, più calma", badge: "",
+      meta: "Sei notti a Oslo, gite facili",
+      pros: ["Zero viaggi lunghi", "Una sola base, valigie ferme", "Gite di 1-2 ore, scegli sotto quale"],
+      cons: ["Niente fiordi grandi e niente Bergen"],
+      bergenNights: 0, osloNights: 6, outKnown: true
+    }
+  };
+
+  /* ---------- state ---------- */
+  var state = { variant: "diretto", flight: "lh", lodging: "solli", fare: 75, day: 0, alt: "isole" };
+  var alts = {
+    isole: { name: "Isole del fiordo e musei", sub: "La più riposante: traghetto per le isole e musei a Bygdøy." },
+    lillehammer: { name: "Lillehammer in giornata", sub: "Treno di circa 2 ore, città olimpica e museo all'aperto." },
+    fredrikstad: { name: "Fredrikstad, città fortificata", sub: "Treno di circa 1 ora, centro storico dentro le mura." }
+  };
+  var altDays = {
+    isole: [
+      { title: "Bygdøy, con calma", when: "Mercoledì 28 aprile", body: "Penisola di Bygdøy con i musei dei viaggi per mare, come il Fram e il Kon-Tiki. Il museo dei Vichinghi è chiuso. Pranzo con panino e caffè, rientro nel pomeriggio.", cost: "Ingressi: da verificare. L'Oslo Pass conviene solo con tanti ingressi.", tip: "Nella bella stagione c'è il battello dal centro: più bello del bus.", warn: "Controlla gli orari di apertura prima di andare.", links: [["Foto di Bygdøy", IMG("Bygdøy Oslo museums")]] },
+      { title: "Hovedøya e le isole", when: "Giovedì 29 aprile", body: "Traghetto dal porto a Hovedøya, isola con i resti di un monastero, sentieri e punti per un picnic. Si torna con il battello successivo.", cost: "Il traghetto dovrebbe rientrare nel biglietto dei mezzi di Ruter: da verificare.", tip: "Porta pranzo al sacco dal supermercato: spendi poco e sei all'aperto.", warn: "I battelli a fine aprile possono essere meno frequenti: guarda gli orari su Ruter.", links: [["Foto di Hovedøya", IMG("Hovedøya island Oslo")], ["Orari Ruter", "https://ruter.no"]] },
+      { title: "Akerselva e Grünerløkka", when: "Venerdì 30 aprile", body: "Passeggiata lungo il fiume Akerselva da Mathallen fino a Grünerløkka. Pranzo nei bistrot del quartiere, poi un museo se piove.", cost: "Menù pranzo a Grünerløkka: circa 145-195 NOK a persona.", tip: "Il sentiero lungo il fiume è una delle belle passeggiate urbane di Oslo.", warn: "Evita i locali sulle vie più turistiche.", links: [["Foto di Grünerløkka", IMG("Grünerløkka Oslo")]] }
+    ],
+    lillehammer: [
+      { title: "Oslo con calma", when: "Mercoledì 28 aprile", body: "Mattina libera, poi Munch Museum a Bjørvika e passeggiata fino al lungomare. Serata tranquilla.", cost: "Munch: prezzo da verificare.", tip: "Vai la mattina, quando ci sono meno persone.", warn: "Il giorno dopo c'è il treno: sveglia presto.", links: [["Munch Museum", "https://www.munchmuseet.no"]] },
+      { title: "Lillehammer in giornata", when: "Giovedì 29 aprile", body: "Treno da Oslo, circa 2 ore a tratta, fino alla città olimpica. Museo all'aperto Maihaugen e passeggiata in centro, treno di ritorno nel pomeriggio.", cost: "Treno: da verificare su vy.no. Ingresso a Maihaugen da verificare.", tip: "Prenota il treno in anticipo come per Bergen.", warn: "Controlla che Maihaugen sia aperto a fine aprile.", links: [["Foto di Lillehammer", IMG("Lillehammer Norway")], ["Orari su vy.no", "https://www.vy.no"]] },
+      { title: "Akerselva e Grünerløkka", when: "Venerdì 30 aprile", body: "Passeggiata lungo il fiume Akerselva da Mathallen a Grünerløkka, pranzo nei bistrot del quartiere.", cost: "Menù pranzo: circa 145-195 NOK a persona.", tip: "Giornata leggera dopo la gita.", warn: "Evita i locali sulle vie più turistiche.", links: [["Foto di Grünerløkka", IMG("Grünerløkka Oslo")]] }
+    ],
+    fredrikstad: [
+      { title: "Oslo con calma", when: "Mercoledì 28 aprile", body: "Mattina libera, poi Munch Museum a Bjørvika e passeggiata fino al lungomare.", cost: "Munch: prezzo da verificare.", tip: "Vai la mattina, quando ci sono meno persone.", warn: "Il giorno dopo c'è il treno.", links: [["Munch Museum", "https://www.munchmuseet.no"]] },
+      { title: "Fredrikstad, città fortificata", when: "Giovedì 29 aprile", body: "Treno da Oslo, circa 1 ora, fino a Fredrikstad. Il centro storico (Gamlebyen) è dentro le mura, con casette, botteghe e caffè. Si attraversa il fiume con un battello.", cost: "Treno: da verificare su vy.no.", tip: "È la gita più breve: resti fuori solo mezza giornata.", warn: "Alcune botteghe possono essere chiuse a inizio stagione.", links: [["Foto di Fredrikstad", IMG("Fredrikstad Gamlebyen")], ["Orari su vy.no", "https://www.vy.no"]] },
+      { title: "Akerselva e Grünerløkka", when: "Venerdì 30 aprile", body: "Passeggiata lungo il fiume Akerselva da Mathallen a Grünerløkka, pranzo nei bistrot del quartiere.", cost: "Menù pranzo: circa 145-195 NOK a persona.", tip: "Giornata leggera dopo la gita.", warn: "Evita i locali sulle vie più turistiche.", links: [["Foto di Grünerløkka", IMG("Grünerløkka Oslo")]] }
+    ]
+  };
+  var fares = [
+    { v: 25, label: "Tariffa anticipata", sub: "circa 25 € (circa 250-300 NOK)" },
+    { v: 75, label: "Prezzo medio", sub: "circa 75 € (media indicata da Omio)" }
+  ];
+
+  /* ---------- map ---------- */
+  function showStop(id) {
+    var s = stops[id];
+    var h = '<span class="tag">' + esc(s.tag) + '</span><h3>' + esc(s.name) + '</h3><p>' + esc(s.text) + '</p>';
+    if (s.link) { h += '<div class="btnrow"><a class="btn" target="_blank" rel="noopener noreferrer" href="' + s.link[1] + '">' + esc(s.link[0]) + '</a></div>'; }
+    $("stop-panel").innerHTML = h;
+    var nodes = document.querySelectorAll(".node");
+    for (var i = 0; i < nodes.length; i++) { nodes[i].classList.toggle("on", nodes[i].getAttribute("data-id") === id); }
+  }
+  (function () {
+    var nodes = document.querySelectorAll(".node");
+    for (var i = 0; i < nodes.length; i++) {
+      nodes[i].addEventListener("click", function () { showStop(this.getAttribute("data-id")); });
+      nodes[i].addEventListener("keydown", function (e) { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); showStop(this.getAttribute("data-id")); } });
+    }
+    showStop("oslo");
+  })();
+
+  /* ---------- variants ---------- */
+  function renderVariants() {
+    var h = "";
+    Object.keys(variants).forEach(function (k) {
+      var v = variants[k];
+      h += '<label class="vcard"><input type="radio" name="variant" value="' + k + '"' + (state.variant === k ? " checked" : "") + '>' +
+        '<h3>' + esc(v.title) + (v.badge ? '<span class="badge">' + esc(v.badge) + '</span>' : "") + '</h3>' +
+        '<div class="meta">' + esc(v.meta) + '</div><ul>' +
+        v.pros.map(function (p) { return "<li>" + esc(p) + "</li>"; }).join("") +
+        v.cons.map(function (c) { return '<li style="color:var(--wharf)">' + esc(c) + "</li>"; }).join("") +
+        "</ul></label>";
+    });
+    $("variants").innerHTML = h;
+    var inputs = $("variants").querySelectorAll("input");
+    for (var i = 0; i < inputs.length; i++) {
+      inputs[i].addEventListener("change", function () { state.variant = this.value; renderAlts(); renderDays(); renderBudget(); });
+    }
+  }
+  function renderAlts() {
+    var box = $("alts");
+    if (state.variant !== "skip") { box.hidden = true; box.innerHTML = ""; return; }
+    box.hidden = false;
+    var h = '<fieldset style="border:0;margin:0;padding:0;min-width:0"><legend><b>Che gita fate il giovedì?</b> Il resto del programma cambia di conseguenza.</legend>';
+    Object.keys(alts).forEach(function (k) {
+      h += '<label class="opt"><input type="radio" name="alt" value="' + k + '"' + (state.alt === k ? " checked" : "") + '><span><b>' + esc(alts[k].name) + "</b><br><small>" + esc(alts[k].sub) + "</small></span></label>";
+    });
+    box.innerHTML = h + "</fieldset>";
+    var r = box.querySelectorAll("input");
+    for (var i = 0; i < r.length; i++) { r[i].addEventListener("change", function () { state.alt = this.value; renderDays(); }); }
+  }
+
+  /* ---------- days ---------- */
+  var dayNames = [["Lun 26", "aprile"], ["Mar 27", "aprile"], ["Mer 28", "aprile"], ["Gio 29", "aprile"], ["Ven 30", "aprile"], ["Sab 1", "maggio"], ["Dom 2", "maggio"]];
+
+  function dayData(i) {
+    var f = flights[state.flight];
+    var v = state.variant;
+    var bergenLinks = [["Foto di Bryggen", IMG("Bryggen Bergen")], ["Video di Bergen", YT("Bergen Norway Bryggen Fløyen")]];
+    var back = {
+      title: "Ritorno a Oslo", when: "Venerdì 30 aprile",
+      body: "Ultima mattina a Bergen, poi treno per Oslo (6h47-7h22) e notte a Oslo.",
+      cost: "Biglietto del treno: da circa 25 € anticipato a 75 € di media a persona.", tip: "Prenota andata e ritorno insieme su vy.no.",
+      warn: "Con un treno nel primo pomeriggio arrivi a Oslo in serata: niente programmi per la sera.", links: [["Orari su vy.no", "https://www.vy.no"]]
+    };
+    var bergenDay = {
+      title: "Bergen: Bryggen e Fløyen", when: "Giovedì 29 aprile",
+      body: "Bryggen, le case di legno colorate sul porto (patrimonio UNESCO), poi la funicolare Fløibanen: parte a cinque minuti a piedi da Bryggen e in 8 minuti sale a 320 metri. Pranzo al Mercato del Pesce. Chi vuole camminare può fare il percorso da Ulriken a Fløyen, circa quattro ore.",
+      cost: "Funicolare e ingressi: prezzi da verificare.", tip: "Nel tardo pomeriggio la città dall'alto è il momento migliore per le foto.",
+      warn: "Bergen è famosa per la pioggia: giacca impermeabile in valigia.", links: bergenLinks
+    };
+    if (v === "skip" && i >= 2 && i <= 4) return altDays[state.alt][i - 2];
+    if (i === 0) return {
+      title: "Arrivo e Bjørvika", when: "Lunedì 26 aprile",
+      body: "Atterraggio a Gardermoen alle " + f.arr + " con il volo scelto, poi treno o bus fino in centro (circa 30 minuti). Check-in e passeggiata a Bjørvika: Opera House (sul tetto si sale gratis), il quartiere Barcode e il lungomare. Cena a Vippa, street food sul fiordo.",
+      cost: "Tetto dell'Opera gratis. Biglietto dall'aeroporto: da verificare.", tip: "Con un volo mattutino hai quasi tutta la giornata.",
+      warn: "Arrivi dopo un volo con scalo: non riempire troppo il pomeriggio.", links: [["Foto di Oslo Opera House", IMG("Oslo Opera House")], ["Video di Oslo", YT("Oslo Norway city tour")]]
+    };
+    if (i === 1) return {
+      title: "Oslo e concerto", when: "Martedì 27 aprile",
+      body: "Mattina in centro: fortezza di Akershus e Aker Brygge sul porto. Pranzo a Mathallen, il mercato coperto con più di 30 banchi. Cena presto, poi bus fino a Fornebuparken per A Painted Symphony alla Unity Arena.",
+      cost: "Biglietti del concerto: li hai tu. Biglietto del bus: da verificare.", tip: "L'arena consiglia il trasporto pubblico: lasciare l'auto fuori dai pensieri.",
+      warn: "Nei grandi eventi la fermata più vicina viene bloccata per un periodo: leggi l'avviso sul sito dell'arena prima di partire. Mathallen chiude presto la sera.",
+      links: [["Video del concerto", YT("Expedition 33 A Painted Symphony concert")], ["Foto di Akershus", IMG("Akershus Fortress Oslo")]]
+    };
+    if (i === 2) {
+      if (v === "diretto" || v === "volo") return {
+        title: "In treno verso Bergen", when: "Mercoledì 28 aprile",
+        body: "Treno Bergensbanen da Oslo S in mattinata: 6h47-7h22 attraversando l'Hardangervidda, con fermate a Geilo, Myrdal e Voss. Arrivo nel pomeriggio, passeggiata a Bryggen, prima notte a Bergen.",
+        cost: "Da circa 25 € anticipato a 75 € di media a persona, a tratta. Il posto è incluso nelle tariffe Single, Plus e Family.", tip: "Porta qualcosa da mangiare per il viaggio e prenota presto.",
+        warn: "Quasi sette ore di treno: la giornata è questa.", links: [["Video della Bergensbanen", YT("Bergensbanen Oslo Bergen train journey")], ["Orari su vy.no", "https://www.vy.no"]]
+      };
+      if (v === "flam") return {
+        title: "A Bergen via Flåm", when: "Mercoledì 28 aprile",
+        body: "Si parte presto. Oslo S-Myrdal (circa 5h15), Flåmsbana fino a Flåm (55 minuti, scende di 865 metri in 20 km), crociera sul Nærøyfjord da Flåm a Gudvangen (2 ore), bus fino a Voss (circa 1 ora), treno per Bergen (circa 1 ora). In tutto 10-12 ore.",
+        cost: "Oslo-Myrdal: 299-599 NOK con tariffe anticipate. Flåmsbana, crociera e bus: prezzi da verificare.", tip: "È un percorso che si può prenotare a pezzi o come pacchetto: confronta i due conti.",
+        warn: "Senza prenotazione sulla Flåmsbana è una scommessa. Non ho verificato che a fine aprile i servizi siano tutti attivi.", links: [["Video della Flåmsbana", YT("Flåmsbana railway Flåm")], ["Foto di Flåm", IMG("Flåm Nærøyfjord")]]
+      };
+      if (v === "notte") return {
+        title: "Ultima giornata a Oslo e treno notturno", when: "Mercoledì 28 aprile",
+        body: "Giornata libera a Oslo: Parco Vigeland e Holmenkollen, oppure il Munch Museum. Treno notturno Vy alle 23:03, arrivo a Bergen alle 06:23.",
+        cost: "Prezzo del biglietto notturno: da verificare. Risparmi una notte d'albergo.", tip: "Prima di partire lascia le valigie in deposito dove dormirai a Bergen.",
+        warn: "Il posto Standard è il più economico ma il meno riposante su un viaggio intero. Arrivi prima del check-in.", links: [["Foto del Parco Vigeland", IMG("Vigeland sculpture park Oslo")], ["Orari su vy.no", "https://www.vy.no"]]
+      };
+      return {
+        title: "Bygdøy e Munch", when: "Mercoledì 28 aprile",
+        body: "Penisola di Bygdøy con i musei, il Viking Ship Museum però è chiuso fino a fine 2027. Nel pomeriggio il Munch Museum a Bjørvika.",
+        cost: "Ingressi: da verificare. L'Oslo Pass conviene solo con tanti ingressi.", tip: "Con tre musei in un giorno l'Oslo Pass può ripagarsi.",
+        warn: "Il museo dei Vichinghi è chiuso: i reperti dell'epoca si vedono al Museo Storico in centro.", links: [["Foto di Bygdøy", IMG("Bygdøy Oslo museums")]]
+      };
+    }
+    if (i === 3) {
+      if (v === "skip") return {
+        title: "Parco Vigeland e Holmenkollen", when: "Giovedì 29 aprile",
+        body: "Parco Vigeland, poi Holmenkollen. Se c'è sole, in metro fino a Sognsvann per una passeggiata al lago.",
+        cost: "Il parco è gratis. Metro: da verificare.", tip: "Sognsvann e Vettakollen si raggiungono con la metro verde.", warn: "Controlla il meteo: queste mete sono all'aperto.", links: [["Foto del Parco Vigeland", IMG("Vigeland sculpture park Oslo")]]
+      };
+      if (v === "notte") { var d = JSON.parse(JSON.stringify(bergenDay)); d.title = "Bergen: la tua unica notte"; d.when = "Giovedì 29 aprile, dopo l'arrivo alle 06:23"; d.tip = "Con una sola notte conviene fare Bryggen la mattina e Fløyen nel pomeriggio."; return d; }
+      return bergenDay;
+    }
+    if (i === 4) {
+      if (v === "skip") return {
+        title: "Grünerløkka e Akerselva", when: "Venerdì 30 aprile",
+        body: "Passeggiata lungo il fiume Akerselva da Mathallen fino a Grünerløkka. Pranzo nei bistrot del quartiere.",
+        cost: "Menù pranzo a Grünerløkka: circa 145-195 NOK a persona.", tip: "Il sentiero lungo il fiume è una delle belle passeggiate urbane di Oslo.", warn: "Evita i locali sulla via principale per i turisti.", links: [["Foto di Grünerløkka", IMG("Grünerløkka Oslo")]]
+      };
+      if (v === "volo") return {
+        title: "Ritorno a Oslo in volo", when: "Venerdì 30 aprile",
+        body: "Mattina a Bergen con calma, poi volo diretto Bergen-Oslo Gardermoen (circa 55 minuti, con SAS, Norwegian o Widerøe, molti voli al giorno). Da Gardermoen il treno per il centro, notte a Oslo. Più comodo se il volo è dopo pranzo.",
+        cost: "Da circa 65-70 € a persona a tratta nelle stime viste, bagaglio escluso: da verificare per quel giorno.", tip: "Se bastano i bagagli a mano, il costo si avvicina a quello del treno standard.",
+        warn: "Aeroporto di Bergen a circa 20 km dal centro: conta il trasferimento, e arriva due ore prima.", links: [["Skyscanner", "https://www.skyscanner.it"], ["SAS", "https://www.flysas.com"]]
+      };
+      return back;
+    }
+    if (i === 5) return {
+      title: "Drøbak e Oscarsborg", when: "Sabato 1 maggio",
+      body: "Gita al villaggio di Drøbak, a circa 40 km a sud di Oslo, e alla fortezza di Oscarsborg nel fiordo. Rientro a Oslo per cena a Grünerløkka.",
+      cost: "Auto economy: circa 59 € al giorno, più pedaggi. Il bus costa meno: prezzo da verificare.", tip: "Se Diana vuole guidare, questo è il giorno giusto: una gita facile e breve.",
+      warn: "Non ho verificato se Oscarsborg è aperta a inizio maggio. L'Oslo Pass non copre questa gita.", links: [["Foto di Drøbak", IMG("Drøbak Oscarsborg fortress")], ["Video di Drøbak", YT("Drøbak Norway")]]
+    };
+    return {
+      title: "Rientro", when: "Domenica 2 maggio",
+      body: "Colazione tranquilla, poi aeroporto: volo alle " + f.dep + ", in aeroporto circa due ore prima. Il tragitto in treno o bus dura circa 30 minuti.",
+      cost: "Biglietto per l'aeroporto: da verificare.", tip: "Preparare le valigie la sera prima.",
+      warn: f.dep === "06:00" ? "Con il volo delle 06:00 la sveglia è nel cuore della notte." : "Il volo parte alle " + f.dep + ": controlla l'orario esatto prima di organizzare la mattina.", links: [["Voli su Skyscanner", "https://www.skyscanner.it"]]
+    };
+  }
+
+  function renderDays() {
+    var tabs = "";
+    dayNames.forEach(function (d, i) {
+      tabs += '<button type="button" role="tab" id="tab' + i + '" aria-selected="' + (i === state.day) + '" aria-controls="daypanel" data-i="' + i + '"><b>' + d[0] + '</b><span>' + d[1] + '</span></button>';
+    });
+    $("daytabs").innerHTML = tabs;
+    var bs = $("daytabs").querySelectorAll("button");
+    for (var i = 0; i < bs.length; i++) {
+      bs[i].addEventListener("click", function () { state.day = +this.getAttribute("data-i"); renderDays(); });
+    }
+    var d = dayData(state.day);
+    var h = '<h3>' + esc(d.title) + '</h3><div class="when">' + esc(d.when) + '</div><p>' + esc(d.body) + '</p><div class="facts">' +
+      '<div class="fact cost"><b>Costi</b>' + esc(d.cost) + '</div>' +
+      '<div class="fact tip"><b>Consiglio</b>' + esc(d.tip) + '</div>' +
+      '<div class="fact warn"><b>Attenzione</b>' + esc(d.warn) + '</div></div><div class="btnrow">';
+    d.links.forEach(function (l) { h += '<a class="btn" target="_blank" rel="noopener noreferrer" href="' + l[1] + '">' + esc(l[0]) + '</a>'; });
+    h += "</div>";
+    $("daypanel").innerHTML = h;
+    $("daypanel").setAttribute("aria-labelledby", "tab" + state.day);
+    $("prev").disabled = state.day === 0;
+    $("next").disabled = state.day === dayNames.length - 1;
+  }
+  $("prev").addEventListener("click", function () { if (state.day > 0) { state.day--; renderDays(); } });
+  $("next").addEventListener("click", function () { if (state.day < dayNames.length - 1) { state.day++; renderDays(); } });
+
+  /* ---------- budget ---------- */
+  function radios(containerId, name, items, selected, make) {
+    var h = "";
+    Object.keys(items).forEach(function (k) {
+      h += '<label class="opt"><input type="radio" name="' + name + '" value="' + k + '"' + (String(selected) === k ? " checked" : "") + '><span>' + make(k, items[k]) + '</span></label>';
+    });
+    $(containerId).innerHTML = h;
+  }
+  function renderFields() {
+    radios("f-flight", "flight", flights, state.flight, function (k, f) {
+      return "<b>" + eur.format(f.tot) + "</b> " + esc(f.name) + "<br><small>" + esc(f.out) + " e " + esc(f.back) + ", " + esc(f.note) + (f.badge ? ". " + esc(f.badge) : "") + "</small>";
+    });
+    radios("f-lodging", "lodging", lodgings, state.lodging, function (k, l) {
+      return "<b>" + eur.format(l.tot) + "</b> per 6 notti, " + esc(l.name) + "<br><small>" + esc(l.area) + ", voto " + esc(l.score) + "</small>";
+    });
+    var fo = {}; fares.forEach(function (f) { fo[f.v] = f; });
+    radios("f-train", "fare", fo, state.fare, function (k, f) { return "<b>" + esc(f.label) + "</b><br><small>" + esc(f.sub) + "</small>"; });
+    ["flight", "lodging", "fare"].forEach(function (n) {
+      var els = document.querySelectorAll('input[name="' + n + '"]');
+      for (var i = 0; i < els.length; i++) {
+        els[i].addEventListener("change", function () {
+          if (this.name === "fare") state.fare = +this.value; else state[this.name] = this.value;
+          renderDays(); renderBudget();
+        });
+      }
+    });
+  }
+
+  function renderBudget() {
+    var v = variants[state.variant];
+    var f = flights[state.flight];
+    var l = lodgings[state.lodging];
+    var rows = [], todo = [], total = 0;
+
+    rows.push(["Voli", "andata e ritorno, due persone", f.tot]); total += f.tot;
+
+    var osloCost = Math.round(l.tot * v.osloNights / 6);
+    rows.push(["Alloggio a Oslo", v.osloNights + " notti, stima in proporzione", osloCost]); total += osloCost;
+
+    var bn = parseFloat($("in-bergen").value);
+    if (v.bergenNights > 0) {
+      if (bn > 0) { var bc = bn * v.bergenNights; rows.push(["Alloggio a Bergen", v.bergenNights + (v.bergenNights === 1 ? " notte" : " notti"), bc]); total += bc; }
+      else { todo.push("Alloggio a Bergen: " + v.bergenNights + (v.bergenNights === 1 ? " notte" : " notti") + ", da cercare."); }
+    }
+
+    if (state.variant === "diretto") {
+      var tc = 2 * 2 * state.fare; rows.push(["Treno Oslo-Bergen", "andata e ritorno, due persone", tc]); total += tc;
+    } else if (state.variant === "volo") {
+      var tv = 2 * state.fare; rows.push(["Treno Oslo-Bergen", "solo andata, due persone", tv]); total += tv;
+      var fv = 2 * 70; rows.push(["Volo Bergen-Oslo", "due persone, stima senza bagaglio", fv]); total += fv;
+    } else if (state.variant === "flam") {
+      var rc = 2 * state.fare; rows.push(["Treno Bergen-Oslo", "solo ritorno, due persone", rc]); total += rc;
+      todo.push("Andata via Flåm: Oslo-Myrdal, Flåmsbana, crociera e bus.");
+    } else if (state.variant === "notte") {
+      var rc2 = 2 * state.fare; rows.push(["Treno Bergen-Oslo", "solo ritorno, due persone", rc2]); total += rc2;
+      todo.push("Biglietti del treno notturno all'andata.");
+    }
+
+    if ($("in-car").checked) { rows.push(["Auto a noleggio", "un giorno, senza pedaggi", 59]); total += 59; }
+
+    var food = parseFloat($("in-food").value) || 0;
+    if (food > 0) { var fc = food * 7; rows.push(["Cibo", "7 giorni, due persone", fc]); total += fc; }
+
+    var ct = parseFloat($("in-concert").value);
+    if (ct > 0) { rows.push(["Biglietti del concerto", "già comprati", ct]); total += ct; }
+    else { todo.push("Biglietti del concerto, se non li hai già."); }
+
+    todo.push("Trasporti locali a Oslo e Bergen, ingressi e pedaggi.");
+
+    $("sum").innerHTML = rows.map(function (r) {
+      return "<tr><td>" + esc(r[0]) + "<small>" + esc(r[1]) + "</small></td><td>" + eur.format(r[2]) + "</td></tr>";
+    }).join("");
+    $("total").innerHTML = eur.format(total) + "<small>in due, voci note. A persona circa " + eur.format(total / 2) + ".</small>";
+    $("todo").innerHTML = "<b style='margin-left:-18px'>Non incluso:</b>" + todo.map(function (t) { return "<li>" + esc(t) + "</li>"; }).join("");
+  }
+  ["in-bergen", "in-food", "in-concert"].forEach(function (id) { $(id).addEventListener("input", renderBudget); });
+  $("in-car").addEventListener("change", renderBudget);
+
+  /* ---------- links ---------- */
+  (function () {
+    var items = [
+      ["Bryggen, Bergen", "Le case di legno colorate sul porto.", [["Foto", IMG("Bryggen Bergen")], ["Video", YT("Bryggen Bergen Norway")]]],
+      ["Bergensbanen", "Il treno Oslo-Bergen attraverso l'altopiano.", [["Foto", IMG("Bergensbanen train")], ["Video", YT("Bergensbanen Oslo Bergen train journey")]]],
+      ["Flåmsbana e Nærøyfjord", "La variante spettacolare, con la discesa a Flåm.", [["Foto", IMG("Flåmsbana")], ["Video", YT("Flåmsbana railway")]]],
+      ["Opera House di Oslo", "Il tetto che si può camminare, a Bjørvika.", [["Foto", IMG("Oslo Opera House")], ["Video", YT("Oslo Opera House roof")]]],
+      ["Parco Vigeland", "Le sculture all'aperto, gratis.", [["Foto", IMG("Vigeland sculpture park Oslo")], ["Video", YT("Vigeland park Oslo")]]],
+      ["Drøbak e Oscarsborg", "La gita sul fiordo.", [["Foto", IMG("Drøbak Oscarsborg")], ["Video", YT("Drøbak Norway")]]],
+      ["A Painted Symphony", "Il concerto di Expedition 33.", [["Video", YT("Expedition 33 A Painted Symphony concert")]]],
+      ["Unity Arena, Fornebu", "Dove si tiene il concerto.", [["Foto", IMG("Unity Arena Fornebu")]]]
+    ];
+    $("linkgrid").innerHTML = items.map(function (it) {
+      return '<div class="card"><h3>' + esc(it[0]) + '</h3><p>' + esc(it[1]) + '</p><div class="btnrow">' +
+        it[2].map(function (l) { return '<a class="btn" target="_blank" rel="noopener noreferrer" href="' + l[1] + '">' + esc(l[0]) + '</a>'; }).join("") + "</div></div>";
+    }).join("");
+  })();
+
+  /* ---------- init ---------- */
+  renderVariants();
+  renderFields();
+  renderDays();
+  renderBudget();
+})();
+</script>
+</body>
+</html>
